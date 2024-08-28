@@ -23,10 +23,10 @@ class PrinterNetworkManager {
     try {
       _socket = await Socket.connect(_host, _port, timeout: _timeout);
       _isConnected = true;
-      return Future<PosPrintResult>.value(PosPrintResult.success);
+      return PosPrintResult.success;
     } catch (e) {
       _isConnected = false;
-      return Future<PosPrintResult>.value(PosPrintResult.timeout);
+      return PosPrintResult.timeout;
     }
   }
 
@@ -34,15 +34,18 @@ class PrinterNetworkManager {
       {bool isDisconnect = true}) async {
     try {
       if (!_isConnected) {
-        await connect();
+        final r = await connect();
+        if(r!=PosPrintResult.success){
+          return r;
+        }
       }
       _socket.add(data);
       if (isDisconnect) {
         await disconnect();
       }
-      return Future<PosPrintResult>.value(PosPrintResult.success);
+      return PosPrintResult.success;
     } catch (e) {
-      return Future<PosPrintResult>.value(PosPrintResult.timeout);
+      return PosPrintResult.timeout;
     }
   }
 
@@ -53,6 +56,6 @@ class PrinterNetworkManager {
     if (timeout != null) {
       await Future.delayed(timeout, () => null);
     }
-    return Future<PosPrintResult>.value(PosPrintResult.success);
+    return PosPrintResult.success;
   }
 }
